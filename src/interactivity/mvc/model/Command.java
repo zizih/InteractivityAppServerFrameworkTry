@@ -21,17 +21,19 @@ public class Command {
     private String nextId;
 
     protected Command() {
+        this.opts = new HashMap<String, Option>();
     }
 
     protected Command(String id, String nextId, String prompt) {
         this.opts = new HashMap<String, Option>();
         this.id = id;
+        this.nextId = nextId;
         this.prompt = prompt;
     }
 
-    protected void addCommands(Option... commands) {
+    protected void addOptions(Option... opts) {
         StringBuilder pattern = new StringBuilder();
-        for (Option comm : commands) {
+        for (Option comm : opts) {
             this.opts.put(comm.getId(), comm);
             pattern.append("\n" + comm.getPrompt());
         }
@@ -40,12 +42,12 @@ public class Command {
                 + pattern.toString();
     }
 
-    protected Option addCommand(Option comm) {
-        this.opts.put(comm.getId(), comm);
+    protected Option addOption(Option opt) {
+        this.opts.put(opt.getId(), opt);
         this.prompt += "\n\n"
                 + "<<<<Step: " + id + ">>>>"
-                + comm.getPrompt();
-        return comm;
+                + opt.getPrompt();
+        return opt;
     }
 
     public void setNextId(String nextId) {
@@ -60,22 +62,36 @@ public class Command {
         this.prompt = prompt;
     }
 
-    protected String getId() {
+    public String getId() {
         return id;
     }
 
-    protected String getPrompt() {
+    public String getPrompt() {
         return prompt;
     }
 
-    protected String getNextId() {
+    public String getNextId() {
         return nextId;
     }
 
-    protected String invoke(String commId, String... params) {
-        Option comm = opts.get(commId);
-        if (comm == null) return "客户端输入命令有错\n";
-        return comm.invoke(params);
+    //默认第0个为CommandId
+    protected String invoke(String... params) {
+        if (params == null || params.equals("") || params.length == 0) return "没有收到命令";
+        Option opt = opts.get(params[0]);
+        if (opt == null) return "客户端输入命令有错\n";
+        return opt.invoke(cutStrArr(params, 1, params.length));
+    }
+
+    private String[] cutStrArr(String[] rcArr, int start, int end) {
+        if (rcArr == null || start == end) return null;
+        int len = rcArr.length;
+        if (start < 0) start = 0;
+        if (end < len) end = len;
+        String[] resultArr = new String[end - start];
+        for (int i = start; i < end; i++) {
+            resultArr[i - start] = rcArr[i];
+        }
+        return resultArr;
     }
 
 }

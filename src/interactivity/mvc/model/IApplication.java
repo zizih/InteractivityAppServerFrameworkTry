@@ -1,5 +1,7 @@
 package interactivity.mvc.model;
 
+import interactivity.mvc.AppHandler;
+
 /**
  * User: 无止(何梓)
  * Date: 3/21/14
@@ -7,8 +9,8 @@ package interactivity.mvc.model;
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public interface IApplication<T> {
+public interface IApplication<T extends AppHandler> {
 
-    public Application newApp();
+    public IApplication newApp();
 
 }

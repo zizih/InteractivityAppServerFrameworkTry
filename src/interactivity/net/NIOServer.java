@@ -22,23 +22,24 @@ import java.util.Iterator;
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public class NIOServer<T> implements IServer<T> {
+public class NIOServer<T extends Application> implements IServer<T> {
 
     //通道管理器
     private Selector selector;
     private ServerSocket socket;
     private ServerHandler handler;
 
-    private Class<T> entityClass;
+    private Class<T> tClzz;
 
     public NIOServer() {
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        entityClass = (Class) params[0];
-        System.out.println(entityClass.getName());
-        handler = new ServerHandler(entityClass);
+        tClzz = (Class) params[0];
+        System.out.println(tClzz.getName());
+        handler = new ServerHandler(tClzz);
     }
 
+    @Override
     public NIOServer init(int port) throws IOException {
 
         //打开ServerSocket通道
@@ -84,21 +85,33 @@ public class NIOServer<T> implements IServer<T> {
     class ServerHandler {
 
         private Class handlerClzz;
+        private Application app;
 
         ServerHandler(Class clzz) {
             this.handlerClzz = clzz;
         }
 
         private void handleAccept(SelectionKey key) throws IOException {
-            //todo
-            ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
-            SocketChannel channel = serverSocketChannel.accept();
+            // 获得和客户端连接的通道
+            ServerSocketChannel server = (ServerSocketChannel) key
+                    .channel();
+            SocketChannel channel = server.accept();
+            // 设置成非阻塞
             channel.configureBlocking(false);
-            channel.write(ByteBuffer.wrap(
-                    ("Server haved received your connection,and your address: "
-                            + channel.socket().getInetAddress() + "")
-                            .getBytes()));
-            channel.register(key.selector(), SelectionKey.OP_READ);
+
+            //给客户端发送信息
+            if (app == null) {
+                Application baseApp = null;
+                try {
+                    baseApp = (Application) handlerClzz.newInstance();
+                    app = baseApp.newApp();
+                    channel.write(toByteBuffer(app.getCommand("init").getPrompt()));
+                    //在和客户端连接成功之后，为了可以接收到客户端的信息，需要给通道设置读的权限。
+                    channel.register(key.selector(), SelectionKey.OP_READ);
+                } catch (Exception e) {
+                    e.printStackTrace();  //deal with ex
+                }
+            }
         }
 
         private void handleRead(SelectionKey key) throws IOException {
@@ -118,30 +131,11 @@ public class NIOServer<T> implements IServer<T> {
                 if (len < 0) {
                     resultStr = "空命令";
                 } else {
-                    try {
-                        Application baseApp = (Application) handlerClzz.newInstance();
-                        Application app = baseApp.newApp();
-                        resultStr = app.invoke(datas[0], datas[1], cutStrArr(datas, 2, len));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        resultStr = "出错，请给正确的命令！";
-                    }
+                    resultStr = app.invoke(datas) + app.nextCommond(datas[0]).getPrompt();
                 }
             }
             channel.write(toByteBuffer(resultStr));
             channel.register(key.selector(), SelectionKey.OP_READ);
-        }
-
-        private String[] cutStrArr(String[] rcArr, int start, int end) {
-            if (rcArr == null) return null;
-            int len = rcArr.length;
-            if (start < 0) start = 0;
-            if (end < len) end = len - 1;
-            String[] resultArr = new String[end - start];
-            for (int i = start; i < end; i++) {
-                resultArr[i - start] = rcArr[i];
-            }
-            return resultArr;
         }
 
         private ByteBuffer toByteBuffer(String str) {

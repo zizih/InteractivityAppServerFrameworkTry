@@ -40,7 +40,7 @@ public class MyApp extends Application<MyHandler> {
 
         //第二个option  //有复用，按需设计
         oneOpt = app.newOption();
-        oneOpt.setId("one");
+        oneOpt.setId("oneOpt");
         oneOpt.setNextId("twoOpt");
         oneOpt.setPrompt("你知道怎么做的～");
         demo.setPrompt("再看一次演示，会有不同结果哦");
@@ -53,7 +53,7 @@ public class MyApp extends Application<MyHandler> {
         twoOpt = app.newOption();
         twoOpt.setId("twoOpt");
         twoOpt.setNextId("thrOpt");
-        twoOpt.setPrompt("不紧张，除非喜欢你的人刚好你也喜欢，ta才会知道你在这里说的一切");
+        twoOpt.setPrompt("不紧张，不是刚好互相讨厌或互相V.不会有人知道你说了什么");
         regist = app.newCommand();
         regist.setId("regist");
         regist.setPrompt("留下自己的名字,可以等待被表白哦～ 输入格式是 regist:yourname");
@@ -63,7 +63,7 @@ public class MyApp extends Application<MyHandler> {
         thrOpt = app.newOption();
         thrOpt.setId("thrOpt");
         thrOpt.setNextId("oneOpt");   //循环复用
-        thrOpt.setPrompt("加油啦，有勇气就不会遗憾");
+        thrOpt.setPrompt("说了就不会遗憾");
         app.addCommand(thrOpt, show, todo, regist, wish, exit);
         return app;
     }

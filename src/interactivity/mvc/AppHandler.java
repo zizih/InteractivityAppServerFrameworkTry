@@ -7,11 +7,11 @@ package interactivity.mvc;
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public class BaseHandler{
+public class AppHandler {
 
 
 
-    public BaseHandler() {
+    public AppHandler() {
 
     }
 

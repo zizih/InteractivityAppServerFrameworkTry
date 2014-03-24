@@ -142,9 +142,9 @@ public class Log {
                     Event event = _gson.fromJson(msg.substring("[todo]".length()), Event.class);
                     //return like such: [1384519003991] rain:like:dad detail:{}
                     return String.format("[todo]%s:%s:%s  detail:%s\n",
-//                            event.getFrom().getNick(),
-//                            event.getAction(),
-//                            event.getTo().getNick(),
+                            event.getFrom().getNick(),
+                            event.getAction(),
+                            event.getTo().getNick(),
                             msg.substring("[todo]".length()));
                 } catch (Exception e) {
                     e.printStackTrace();
