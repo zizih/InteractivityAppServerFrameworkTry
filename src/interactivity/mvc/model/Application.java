@@ -32,22 +32,22 @@ public abstract class Application<T extends AppHandler> implements IApplication<
         return null;  //todo
     }
 
-    public Option newCommand() {
+    public Option newOption() {
         return new Option(tClzz);
     }
 
-    public Option newCommand(String commId, String commPrompt) {
-        Option comm = new Option(tClzz);
-        comm.setId(commId);
-        comm.setPrompt(commPrompt);
-        return comm;
+    public Option newOption(String optId, String optPrompt) {
+        Option opt = new Option(tClzz);
+        opt.setId(optId);
+        opt.setPrompt(optPrompt);
+        return opt;
     }
 
-    public Command newOption() {
+    public Command newCommand() {
         return new Command();
     }
 
-    public Command newOption(String optionId, String nextId, String optionPrompt) {
+    public Command newCommand(String optionId, String nextId, String optionPrompt) {
         return new Command(optionId, nextId, optionPrompt);
     }
 

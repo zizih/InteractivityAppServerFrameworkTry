@@ -105,7 +105,7 @@ public class NIOServer<T extends Application> implements IServer<T> {
                 try {
                     baseApp = (Application) handlerClzz.newInstance();
                     app = baseApp.newApp();
-                    channel.write(toByteBuffer(app.getCommand("init").getPrompt()));
+                    channel.write(toByteBuffer(app.getCommand("initComm").getPrompt()));
                     //在和客户端连接成功之后，为了可以接收到客户端的信息，需要给通道设置读的权限。
                     channel.register(key.selector(), SelectionKey.OP_READ);
                 } catch (Exception e) {

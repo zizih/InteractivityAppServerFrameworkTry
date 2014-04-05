@@ -16,55 +16,55 @@ public class MyApp extends Application<MyHandler> {
     @Override
     public Application newApp() {
         Application app = new MyApp();
-        Command initOpt, oneOpt, twoOpt, thrOpt;      //有这些步骤
-        Option demo, todo, exit, regist, show, wish; //有这些命令
+        Command initComm, oneComm, twoComm, thrComm;      //有这些命令
+        Option demo, todo, exit, regist, show, wish; //有这些开关
 
         //第一个option
-        initOpt = app.newOption("init", "oneOpt", "Successfully!");
-        initOpt.setId("init");
-        initOpt.setNextId("oneOpt");
-        initOpt.setPrompt("Successfully!");
-        demo = app.newCommand();
+        initComm = app.newCommand("initComm", "oneComm", "Successfully!");
+        initComm.setId("initComm");
+        initComm.setNextId("oneComm");
+        initComm.setPrompt("Successfully!");
+        demo = app.newOption();
         demo.setId("demo");
         demo.setPrompt("查看演示");
-        show = app.newCommand();
+        show = app.newOption();
         show.setId("show");
         show.setPrompt("去看看这里都有谁在");
-        wish = app.newCommand();
+        wish = app.newOption();
         wish.setId("wish");
-        wish.setPrompt("查看对对方使用相同喜欢词语的快乐的人");
-        exit = app.newCommand();
+        wish.setPrompt("查看对对方使用相同动词的人");
+        exit = app.newOption();
         exit.setId("exit");
-        exit.setPrompt("退出不需要代价哦～");
-        app.addCommand(initOpt, demo, show, wish, exit);
+        exit.setPrompt("退出");
+        app.addCommand(initComm, demo, show, wish, exit);
 
         //第二个option  //有复用，按需设计
-        oneOpt = app.newOption();
-        oneOpt.setId("oneOpt");
-        oneOpt.setNextId("twoOpt");
-        oneOpt.setPrompt("你知道怎么做的～");
+        oneComm = app.newCommand();
+        oneComm.setId("oneComm");
+        oneComm.setNextId("twoComm");
+        oneComm.setPrompt("你知道怎么做的～");
         demo.setPrompt("再看一次演示，会有不同结果哦");
-        todo = app.newCommand();
+        todo = app.newOption();
         todo.setId("todo");
-        todo.setPrompt("去表白,格式是 todo: you [ignore|like|hate|unlike|love] other");
-        app.addCommand(oneOpt, demo, todo, show, wish, exit);    //第二个开关拥有的命令
+        todo.setPrompt("去表达，格式是 todo: you [ignore|like|hate|unlike|love] other");
+        app.addCommand(oneComm, demo, todo, show, wish, exit);    //第二个开关拥有的命令
 
         //第三个option  //有复用，按需设计
-        twoOpt = app.newOption();
-        twoOpt.setId("twoOpt");
-        twoOpt.setNextId("thrOpt");
-        twoOpt.setPrompt("不紧张，不是刚好互相讨厌或互相V.不会有人知道你说了什么");
-        regist = app.newCommand();
+        twoComm = app.newCommand();
+        twoComm.setId("twoComm");
+        twoComm.setNextId("thrComm");
+        twoComm.setPrompt("不紧张，不是刚好互相讨厌或互相其他.不会有人知道你说了什么");
+        regist = app.newOption();
         regist.setId("regist");
-        regist.setPrompt("留下自己的名字,可以等待被表白哦～ 输入格式是 regist:yourname");
-        app.addCommand(twoOpt, demo, show, todo, regist, wish, exit);
+        regist.setPrompt("留下自己的名字,可以等待被表白OR表黑，输入格式是regist:yourname");
+        app.addCommand(twoComm, demo, show, todo, regist, wish, exit);
 
         //第三个option  //有复用，按需设计
-        thrOpt = app.newOption();
-        thrOpt.setId("thrOpt");
-        thrOpt.setNextId("oneOpt");   //循环复用
-        thrOpt.setPrompt("说了就不会遗憾");
-        app.addCommand(thrOpt, show, todo, regist, wish, exit);
+        thrComm = app.newCommand();
+        thrComm.setId("thrComm");
+        thrComm.setNextId("oneOpt");   //循环复用
+        thrComm.setPrompt("说了就不会遗憾");
+        app.addCommand(thrComm, show, todo, regist, wish, exit);
         return app;
     }
 
