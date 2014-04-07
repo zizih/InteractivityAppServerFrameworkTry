@@ -11,13 +11,14 @@ import java.util.List;
  */
 public interface IDao<T> {
 
-    T fetchOne(long id);
 
-    List<T> fetch();
+    List<T> fetch() throws Exception;
 
-    boolean insert(T t);
+    T fetchOne(long id) throws Exception;
 
-    boolean update(T t);
+    boolean insert(T t) throws Exception;
 
-    boolean delete(long id);
+    boolean update(T t) throws Exception;
+
+    boolean delete(long id) throws Exception;
 }

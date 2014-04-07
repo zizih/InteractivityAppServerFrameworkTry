@@ -2,7 +2,7 @@ package app.controller;
 
 import app.model.Client;
 import app.model.Event;
-import interactivity.dpa.log.Log;
+import interactivity.dpa.Log;
 import interactivity.mvc.AppHandler;
 
 import java.util.ArrayList;

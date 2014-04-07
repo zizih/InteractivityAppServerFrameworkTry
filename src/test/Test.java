@@ -1,7 +1,15 @@
-package interactivity;
+package test;
+
+import app.model.Client;
+import interactivity.Person;
+import interactivity.dpa.DaoAdapter;
+import interactivity.dpa.db.Colum;
+import interactivity.dpa.db.Key;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Properties;
@@ -15,13 +23,68 @@ import java.util.Properties;
  */
 public class Test {
 
+
     public static void main(String[] args) {
-        System.out.println(System.getProperty("user.dir"));
-         String rootPath = System.getProperty("user.dir");
-            Properties p = new Properties();
+        Client c = new Client();
+        c.setDesc(Client.Desc.dios);
+        c.setId(123);
+        c.setIp("10.50.9.186");
+        c.setNick("hezi");
+        c.setPort("9080");
+
         try {
-            p.load(new FileInputStream(rootPath+"/conf/application.conf"));
-            System.out.println(p.getProperty("dbi","mem"));
+            ClientDao dao = new ClientDao();
+            dao.insert(c);
+            dao.insert(c);
+        System.out.println(dao.fetch().size());
+        } catch (Exception e) {
+            e.printStackTrace();  //deal with ex
+        }
+    }
+
+    static class ClientDao extends DaoAdapter<Client> {
+
+        public ClientDao() throws Exception {
+        }
+    }
+
+
+    public static void main2123(String[] args) {
+        ModelTest m = new ModelTest();
+        m.setName("Hezi");
+        Field[] fields = m.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            System.out.println("..: " + field.getName());
+            Annotation anno = field.getAnnotation(Key.class);
+            System.out.println(anno == null);
+            System.out.println(((Key) anno).name());
+        }
+    }
+
+    static class ModelTest {
+
+        @Key(auto = true, name = "name")
+        private String id;
+
+        @Colum(name = "", format = "", type = "")
+        private long idd;
+
+        public String getName() {
+            return id;
+        }
+
+        public void setName(String name) {
+            this.id = name;
+        }
+    }
+
+    public static void main2(String[] args) {
+        System.out.println(System.getProperty("user.dir"));
+        String rootPath = System.getProperty("user.dir");
+        Properties p = new Properties();
+        try {
+            p.load(new FileInputStream(rootPath + "/conf/application.conf"));
+            System.out.println(p.getProperty("dbi", "mem"));
         } catch (IOException e) {
             e.printStackTrace();  //deal with ex
         }
@@ -40,12 +103,12 @@ public class Test {
         }
     }
 
-    public void test () {
-         EntityDao testDao = new EntityDao();
+    public void test() {
+        EntityDao testDao = new EntityDao();
         Entity e = testDao.get();
     }
 
-    public void test2(){
+    public void test2() {
         HBaseDao<Entity> en = new HBaseDao<Entity>();
         en.get();
     }

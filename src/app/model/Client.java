@@ -1,5 +1,7 @@
 package app.model;
 
+import interactivity.dpa.Model;
+
 /**
  * Created with IntelliJ IDEA.
  * User: rain
@@ -7,7 +9,7 @@ package app.model;
  * Time: 4:03 PM
  * email: zizihjk@gmail.com，作者是个好人
  */
-public class Client {
+public class Client extends Model{
 
     private int id;
     private String ip;

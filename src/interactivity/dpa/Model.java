@@ -1,11 +1,11 @@
-package interactivity.dpa.mem;
+package interactivity.dpa;
 
 /**
  * User: 无止(何梓)
- * Date: 3/27/14
- * Time: 10:50 AM
+ * Date: 4/6/14
+ * Time: 2:58 PM
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public class Mem {
+public class Model {
 }

@@ -40,4 +40,53 @@ public class IO {
         return null;
     }
 
+     public static File byteArrayToFile(byte[] fileBuff, String filePath) {
+        File target = null;
+        OutputStream os = null;
+
+        try {
+            target = new File(filePath);
+            os = new BufferedOutputStream(new FileOutputStream(target));
+            os.write(fileBuff);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (os != null) {
+                try {
+                    os.flush();
+                    os.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+
+        return target;
+    }
+
+
+    public static byte[] fileToByteArray(File file) {
+        if (file != null) {
+            try {
+                FileInputStream fileInput = new FileInputStream(file);
+                ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream(1000);
+                byte[] b = new byte[1000];
+                for (int i; (i = fileInput.read(b)) != -1; ) {
+                    byteArrayOut.write(b, 0, i);
+                }
+
+                fileInput.close();
+                byteArrayOut.close();
+                return byteArrayOut.toByteArray();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
 }

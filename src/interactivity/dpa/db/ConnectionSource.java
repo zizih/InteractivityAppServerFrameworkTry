@@ -44,7 +44,7 @@ public class ConnectionSource {
         dataSource = (BasicDataSource) BasicDataSourceFactory.createDataSource(p);
     }
 
-    public static synchronized Connection getConnection() throws SQLException,Exception {
+    public static synchronized Connection getConnection() throws SQLException, Exception {
         if (dataSource == null) {
             init();
         }
@@ -53,6 +53,5 @@ public class ConnectionSource {
             conn = dataSource.getConnection();
         }
         return conn;
-
     }
 }

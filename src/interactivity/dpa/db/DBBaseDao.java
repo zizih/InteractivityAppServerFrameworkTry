@@ -1,6 +1,13 @@
 package interactivity.dpa.db;
 
-import java.lang.reflect.*;
+import interactivity.dpa.Model;
+import interactivity.dpa.db.IDBDao;
+import interactivity.dpa.db.MysqlHelper;
+import interactivity.dpa.db.Table;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,15 +21,18 @@ import java.util.List;
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public class DBBaseDao<T> implements IDBDao<T> {
+public class DBBaseDao<T extends Model> implements IDBDao<T> {
 
     private Class<T> tClzz;
 
-    public DBBaseDao() {
-        Type genType = getClass().getGenericSuperclass();
-        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        tClzz = (Class) params[0];
-        System.out.println(tClzz.getName());
+    public DBBaseDao(Class<T> tClzz) {
+        this.tClzz = tClzz;
+//        Type genType = getClass().getGenericSuperclass();
+//        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+//        tClzz = (Class) params[0];
+
+
+
     }
 
     @Override

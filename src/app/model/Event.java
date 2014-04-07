@@ -1,6 +1,7 @@
 package app.model;
 
 import com.google.gson.Gson;
+import interactivity.dpa.Model;
 
 import java.util.List;
 
@@ -11,7 +12,9 @@ import java.util.List;
  * Time: 7:38 PM
  * email: zizihjk@gmail.com，作者是个好人
  */
-public class Event {
+public class Event extends Model {
+
+    private long id;
 
     private Client from;
 
@@ -54,6 +57,10 @@ public class Event {
         return Action.norelation;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public Action getAction() {
         return action;
     }
@@ -80,6 +87,10 @@ public class Event {
 
     public void setTo(Client to) {
         this.to = to;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String toJson() {

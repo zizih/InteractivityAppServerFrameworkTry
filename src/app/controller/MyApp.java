@@ -62,7 +62,7 @@ public class MyApp extends Application<MyHandler> {
         //第三个option  //有复用，按需设计
         thrComm = app.newCommand();
         thrComm.setId("thrComm");
-        thrComm.setNextId("oneOpt");   //循环复用
+        thrComm.setNextId("oneComm");   //循环复用
         thrComm.setPrompt("说了就不会遗憾");
         app.addCommand(thrComm, show, todo, regist, wish, exit);
         return app;
