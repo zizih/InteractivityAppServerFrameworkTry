@@ -27,7 +27,7 @@ public class NIOServer<T extends Application> implements IServer<T> {
     //通道管理器
     private Selector selector;
     private ServerSocket socket;
-    private ServerHandler handler;
+    private Application app;
 
     private Class<T> tClzz;
 
@@ -36,7 +36,6 @@ public class NIOServer<T extends Application> implements IServer<T> {
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         tClzz = (Class) params[0];
         System.out.println(tClzz.getName());
-        handler = new ServerHandler(tClzz);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class NIOServer<T extends Application> implements IServer<T> {
     }
 
     @Override
-    public void listen() {
+    public void listen() throws IllegalAccessException, InstantiationException {
         System.out.println("Server started...");
         try {
             while (true) {
@@ -64,10 +63,22 @@ public class NIOServer<T extends Application> implements IServer<T> {
                 while (iterator.hasNext()) {
                     SelectionKey key = (SelectionKey) iterator.next();
                     iterator.remove();
-                    if (key.readyOps() == SelectionKey.OP_ACCEPT) {
-                        handler.handleAccept(key);
-                    } else if (key.readyOps() == SelectionKey.OP_READ) {
-                        handler.handleRead(key);
+                    if (key.isAcceptable()) {
+                        ServerSocketChannel server = (ServerSocketChannel) key
+                                .channel();
+                        SocketChannel channel = server.accept();
+                        channel.configureBlocking(false);
+
+                        if (app == null) {
+                            Application baseApp = (Application) tClzz.newInstance();
+                            app = baseApp.newApp();
+                        }
+                        channel.write(toByteBuffer(app.getCommand("initComm").getPrompt()));
+                        //在和客户端连接成功之后，为了可以接收到客户端的信息，需要给通道设置读的权限。
+                        channel.register(key.selector(), SelectionKey.OP_READ, new Reader());
+                    } else if (key.isReadable() || key.isWritable()) {
+                        Reactor reactor = (Reactor) key.attachment();
+                        reactor.execute(key, app);
                     }
                 }
             }
@@ -82,68 +93,8 @@ public class NIOServer<T extends Application> implements IServer<T> {
         this.socket.close();
     }
 
-    class ServerHandler {
-
-        private Class handlerClzz;
-        private Application app;
-
-        ServerHandler(Class clzz) {
-            this.handlerClzz = clzz;
-        }
-
-        private void handleAccept(SelectionKey key) throws IOException {
-            // 获得和客户端连接的通道
-            ServerSocketChannel server = (ServerSocketChannel) key
-                    .channel();
-            SocketChannel channel = server.accept();
-            // 设置成非阻塞
-            channel.configureBlocking(false);
-
-            //给客户端发送信息
-            if (app == null) {
-                Application baseApp = null;
-                try {
-                    baseApp = (Application) handlerClzz.newInstance();
-                    app = baseApp.newApp();
-                    channel.write(toByteBuffer(app.getCommand("initComm").getPrompt()));
-                    //在和客户端连接成功之后，为了可以接收到客户端的信息，需要给通道设置读的权限。
-                    channel.register(key.selector(), SelectionKey.OP_READ);
-                } catch (Exception e) {
-                    e.printStackTrace();  //deal with ex
-                }
-            }
-        }
-
-        private void handleRead(SelectionKey key) throws IOException {
-            //todo
-            SocketChannel channel = (SocketChannel) key.channel();
-            ByteBuffer byteBuffer = ByteBuffer.allocate(100);
-            channel.read(byteBuffer);
-            byte[] data = byteBuffer.array();
-            System.out.println(new String(data).trim());
-
-            String resultStr = null;
-            if (data.length <= 0) {
-                resultStr = "空命令";
-            } else {
-                String[] datas = new String(data).trim().split(":");
-                int len = datas.length;
-                if (len < 0) {
-                    resultStr = "空命令";
-                } else {
-                    resultStr = app.invoke(datas) + app.nextCommond(datas[0]).getPrompt();
-                }
-            }
-            channel.write(toByteBuffer(resultStr));
-            channel.register(key.selector(), SelectionKey.OP_READ);
-        }
-
-        private ByteBuffer toByteBuffer(String str) {
-            return ByteBuffer.wrap(new String(str).getBytes());
-        }
-
-        private void handleWrite(SelectionKey key) throws IOException {
-            //todo
-        }
+    private ByteBuffer toByteBuffer(String str) {
+        return ByteBuffer.wrap(new String(str).getBytes());
     }
+
 }

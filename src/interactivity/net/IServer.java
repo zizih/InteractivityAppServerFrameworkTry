@@ -15,5 +15,5 @@ interface IServer<T extends IApplication> {
 
     public NIOServer init(int port) throws IOException;
 
-    public void listen();
+    public void listen() throws IllegalAccessException, InstantiationException;
 }

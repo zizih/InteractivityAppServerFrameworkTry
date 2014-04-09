@@ -1,5 +1,7 @@
 package interactivity.mvc;
 
+import interactivity.dpa.DaoAdapter;
+
 /**
  * User: 无止(何梓)
  * Date: 3/22/14
@@ -9,7 +11,7 @@ package interactivity.mvc;
  */
 public class AppHandler {
 
-
+    protected DaoAdapter dao;
 
     public AppHandler() {
 

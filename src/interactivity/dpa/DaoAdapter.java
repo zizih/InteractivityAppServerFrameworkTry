@@ -7,6 +7,7 @@ import interactivity.util.IO;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Properties;
 
@@ -30,6 +31,7 @@ public class DaoAdapter<T extends Model> implements IDao<T> {
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         tClzz = (Class) params[0];
+
         Properties p = new Properties();
         p.load(IO.getPropertiesInputStream());
         String storage = p.getProperty("storage", "mem");
@@ -71,14 +73,14 @@ public class DaoAdapter<T extends Model> implements IDao<T> {
         return dao.delete(id);
     }
 
-    class TxtDao extends Txt<T> {
+    class TxtDao extends interactivity.dpa.TxtDao<T> {
 
         public TxtDao(Class<T> tClzz) throws IOException {
             super(tClzz);
         }
     }
 
-    class MemDao extends Mem<T> {
+    class MemDao extends interactivity.dpa.MemDao<T> {
 
     }
 
@@ -91,27 +93,42 @@ public class DaoAdapter<T extends Model> implements IDao<T> {
 
         @Override
         public List<T> fetch() throws Exception {
-            return fetch(ConnectionSource.getConnection());
+            Connection conn = ConnectionSource.getConnection();
+            List<T> list = fetch(conn);
+            conn.close();
+            return list;
         }
 
         @Override
         public T fetchOne(long id) throws Exception {
-            return fetchOne(ConnectionSource.getConnection(), id);
+            Connection conn = ConnectionSource.getConnection();
+            T t = fetchOne(conn, id);
+            conn.close();
+            return t;
         }
 
         @Override
         public boolean insert(T t) throws Exception {
-            return insert(ConnectionSource.getConnection(), t);
+            Connection conn = ConnectionSource.getConnection();
+            boolean state = insert(conn, t);
+            conn.close();
+            return state;
         }
 
         @Override
         public boolean update(T t) throws Exception {
-            return update(ConnectionSource.getConnection(), t);
+            Connection conn = ConnectionSource.getConnection();
+            boolean state = update(conn, t);
+            conn.close();
+            return state;
         }
 
         @Override
         public boolean delete(long id) throws Exception {
-            return delete(ConnectionSource.getConnection(), id);
+            Connection conn = ConnectionSource.getConnection();
+            boolean state = delete(conn, id);
+            conn.close();
+            return state;
         }
     }
 }

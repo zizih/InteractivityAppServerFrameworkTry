@@ -17,14 +17,14 @@ import java.util.concurrent.atomic.AtomicLong;
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public class Txt<T extends Model> implements IDao<T> {
+public class TxtDao<T extends Model> implements IDao<T> {
 
     private Class<T> tClzz;
     private Gson gson;
     private File txt;
     private AtomicLong idCounter;
 
-    public Txt(Class<T> tClzz) throws IOException {
+    public TxtDao(Class<T> tClzz) throws IOException {
         this.tClzz = tClzz;
 //        Type genType = getClass().getGenericSuperclass();
 //        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();

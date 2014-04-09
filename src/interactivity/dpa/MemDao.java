@@ -20,12 +20,12 @@ import java.util.concurrent.atomic.AtomicLong;
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public class Mem<T extends Model> implements IDao<T> {
+public class MemDao<T extends Model> implements IDao<T> {
 
     private Map<Object, T> cache;
     private AtomicLong idCounter;
 
-    public Mem() {
+    public MemDao() {
         cache = new HashMap<Object, T>();
         idCounter = new AtomicLong(cache.size());
     }

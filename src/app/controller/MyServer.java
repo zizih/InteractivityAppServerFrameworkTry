@@ -16,7 +16,7 @@ public class MyServer extends NIOServer<MyApp> {
     public static void main(String[] args) {
         try {
             new MyServer().init(9000).listen();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();  //deal with ex
         }
     }
