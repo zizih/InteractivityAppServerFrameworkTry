@@ -40,19 +40,8 @@ public class Option {
         this.prompt = String.format("[%s]: %s", id, prompt);
     }
 
-    protected String invoke(String... params) {
-        try {
-            return method.invoke(callbackClzz.newInstance(), params).toString();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
-        return "参数不对";
+    protected String invoke(String... params) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+        return method.invoke(callbackClzz.newInstance(), params).toString();
     }
 
     protected String getId() {

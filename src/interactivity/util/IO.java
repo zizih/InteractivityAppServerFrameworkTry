@@ -30,17 +30,12 @@ public class IO {
         return sb.toString();
     }
 
-    public static InputStream getPropertiesInputStream() {
+    public static InputStream getPropertiesInputStream() throws FileNotFoundException {
         String rootPath = System.getProperty("user.dir");
-        try {
-            return new FileInputStream(rootPath + "/conf/application.conf");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();  //deal with ex
-        }
-        return null;
+        return new FileInputStream(rootPath + "/conf/application.conf");
     }
 
-     public static File byteArrayToFile(byte[] fileBuff, String filePath) {
+    public static File byteArrayToFile(byte[] fileBuff, String filePath) {
         File target = null;
         OutputStream os = null;
 

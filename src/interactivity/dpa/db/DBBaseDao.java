@@ -1,9 +1,6 @@
 package interactivity.dpa.db;
 
 import interactivity.dpa.Model;
-import interactivity.dpa.db.IDBDao;
-import interactivity.dpa.db.MysqlHelper;
-import interactivity.dpa.db.Table;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -30,7 +27,6 @@ public class DBBaseDao<T extends Model> implements IDBDao<T> {
 //        Type genType = getClass().getGenericSuperclass();
 //        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
 //        tClzz = (Class) params[0];
-
 
 
     }

@@ -2,8 +2,6 @@ package app.controller;
 
 import interactivity.net.NIOServer;
 
-import java.io.IOException;
-
 /**
  * User: 无止(何梓)
  * Date: 3/20/14

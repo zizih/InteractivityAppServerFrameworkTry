@@ -5,7 +5,6 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -44,7 +43,7 @@ public class ConnectionSource {
         dataSource = (BasicDataSource) BasicDataSourceFactory.createDataSource(p);
     }
 
-    public static synchronized Connection getConnection() throws SQLException, Exception {
+    public static synchronized Connection getConnection() throws Exception {
         if (dataSource == null) {
             init();
         }

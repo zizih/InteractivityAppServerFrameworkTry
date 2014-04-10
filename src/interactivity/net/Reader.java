@@ -3,6 +3,7 @@ package interactivity.net;
 import interactivity.mvc.model.Application;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
@@ -17,7 +18,7 @@ import java.nio.channels.SocketChannel;
 public class Reader extends Reactor {
 
     @Override
-    public void execute(SelectionKey key, Application app) throws IOException {
+    public void execute(SelectionKey key, Application app) throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
         SocketChannel channel = (SocketChannel) key.channel();
         ByteBuffer byteBuffer = ByteBuffer.allocate(100);
         channel.read(byteBuffer);

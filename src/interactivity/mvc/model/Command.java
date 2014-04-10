@@ -1,5 +1,6 @@
 package interactivity.mvc.model;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,7 +76,7 @@ public class Command {
     }
 
     //默认第0个为CommandId
-    protected String invoke(String... params) {
+    protected String invoke(String... params) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         if (params == null || params.equals("") || params.length == 0) return "没有收到命令";
         Option opt = opts.get(params[0]);
         if (opt == null) return "客户端输入命令有错\n";

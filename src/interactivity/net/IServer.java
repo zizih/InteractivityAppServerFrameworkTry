@@ -3,6 +3,7 @@ package interactivity.net;
 import interactivity.mvc.model.IApplication;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * User: 无止(何梓)
@@ -15,5 +16,5 @@ interface IServer<T extends IApplication> {
 
     public NIOServer init(int port) throws IOException;
 
-    public void listen() throws IllegalAccessException, InstantiationException;
+    public void listen() throws IllegalAccessException, InstantiationException, InvocationTargetException;
 }

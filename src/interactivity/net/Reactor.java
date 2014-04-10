@@ -3,6 +3,7 @@ package interactivity.net;
 import interactivity.mvc.model.Application;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 
@@ -15,7 +16,7 @@ import java.nio.channels.SelectionKey;
  */
 public class Reactor {
 
-    void execute(SelectionKey key, Application app) throws IOException {
+    void execute(SelectionKey key, Application app) throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
     }
 

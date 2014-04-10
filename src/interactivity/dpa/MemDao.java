@@ -51,7 +51,7 @@ public class MemDao<T extends Model> implements IDao<T> {
     }
 
     @Override
-    public boolean insert(T t) {
+    public boolean insert(T t) throws NoSuchMethodException, NoSuchFieldException, IllegalAccessException, InvocationTargetException {
         long id = Long.parseLong(callGetter(t, "id").toString());
         if (id > idCounter.get()) {
             idCounter.getAndSet(id);
@@ -63,7 +63,7 @@ public class MemDao<T extends Model> implements IDao<T> {
     }
 
     @Override
-    public boolean update(T t) throws DaoException {
+    public boolean update(T t) throws DaoException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (!cache.containsKey(getkeyField(t))) {
             return false;
         }
@@ -98,49 +98,29 @@ public class MemDao<T extends Model> implements IDao<T> {
         return fields[0].getName();
     }
 
-    private Object callGetter(T t, String fieldName) {
+    private Object callGetter(T t, String fieldName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String setterName = "get" + fieldName.substring(0, 1).toUpperCase()
                 + fieldName.substring(1, fieldName.length());
-        try {
-            Class clzz = t.getClass();
-            Method method = clzz.getDeclaredMethod(setterName);
-            return method.invoke(t);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Class clzz = t.getClass();
+        Method method = clzz.getDeclaredMethod(setterName);
+        return method.invoke(t);
     }
 
-    private void callSetter(T t, String fieldName, Object value) {
+    private void callSetter(T t, String fieldName, Object value) throws InvocationTargetException, IllegalAccessException, NoSuchFieldException, NoSuchMethodException {
         String setterName = "set" + fieldName.substring(0, 1).toUpperCase()
                 + fieldName.substring(1, fieldName.length());
-        try {
-            Class clzz = t.getClass();
-            Field field = clzz.getDeclaredField(fieldName);
-            Class type = field.getType();
-            Method method = clzz.getDeclaredMethod(setterName, type);
+        Class clzz = t.getClass();
+        Field field = clzz.getDeclaredField(fieldName);
+        Class type = field.getType();
+        Method method = clzz.getDeclaredMethod(setterName, type);
 
-            if (type == long.class) {
-                method.invoke(t, Long.valueOf(value.toString()));
-                return;
-            } else if (type == int.class) {
-                method.invoke(t, Integer.valueOf(value.toString()));
-                return;
-            }
-            method.invoke(t, value);
-
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+        if (type == long.class) {
+            method.invoke(t, Long.valueOf(value.toString()));
+            return;
+        } else if (type == int.class) {
+            method.invoke(t, Integer.valueOf(value.toString()));
+            return;
         }
+        method.invoke(t, value);
     }
 }

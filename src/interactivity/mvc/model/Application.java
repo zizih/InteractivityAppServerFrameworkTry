@@ -2,6 +2,7 @@ package interactivity.mvc.model;
 
 import interactivity.mvc.AppHandler;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public abstract class Application<T extends AppHandler> implements IApplication<
     }
 
     //默认第0个为OptionId
-    public String invoke(String... params) {
+    public String invoke(String... params) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         return cmds.get(params[0]).invoke(cutStrArr(params, 1, params.length));
     }
 
