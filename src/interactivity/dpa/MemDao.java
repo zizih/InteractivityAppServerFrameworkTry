@@ -6,11 +6,11 @@ import interactivity.exception.DaoException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -20,13 +20,13 @@ import java.util.concurrent.atomic.AtomicLong;
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public class MemDao<T extends Model> implements IDao<T> {
+public class MemDao<T extends Model> extends BaseDao<T> implements IDao<T> {
 
     private Map<Object, T> cache;
     private AtomicLong idCounter;
 
     public MemDao() {
-        cache = new HashMap<Object, T>();
+        cache = new ConcurrentHashMap<Object, T>();
         idCounter = new AtomicLong(cache.size());
     }
 
@@ -98,29 +98,4 @@ public class MemDao<T extends Model> implements IDao<T> {
         return fields[0].getName();
     }
 
-    private Object callGetter(T t, String fieldName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        String setterName = "get" + fieldName.substring(0, 1).toUpperCase()
-                + fieldName.substring(1, fieldName.length());
-        Class clzz = t.getClass();
-        Method method = clzz.getDeclaredMethod(setterName);
-        return method.invoke(t);
-    }
-
-    private void callSetter(T t, String fieldName, Object value) throws InvocationTargetException, IllegalAccessException, NoSuchFieldException, NoSuchMethodException {
-        String setterName = "set" + fieldName.substring(0, 1).toUpperCase()
-                + fieldName.substring(1, fieldName.length());
-        Class clzz = t.getClass();
-        Field field = clzz.getDeclaredField(fieldName);
-        Class type = field.getType();
-        Method method = clzz.getDeclaredMethod(setterName, type);
-
-        if (type == long.class) {
-            method.invoke(t, Long.valueOf(value.toString()));
-            return;
-        } else if (type == int.class) {
-            method.invoke(t, Integer.valueOf(value.toString()));
-            return;
-        }
-        method.invoke(t, value);
-    }
 }

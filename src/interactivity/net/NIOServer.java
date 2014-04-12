@@ -55,36 +55,37 @@ public class NIOServer<T extends Application> implements IServer<T> {
     }
 
     @Override
-    public void listen() throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    public void listen() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, NoSuchMethodException, NoSuchFieldException {
         System.out.println("Server started...");
-        try {
-            while (true) {
-                selector.select();
-                Iterator iterator = selector.selectedKeys().iterator();
-                while (iterator.hasNext()) {
-                    SelectionKey key = (SelectionKey) iterator.next();
-                    iterator.remove();
-                    if (key.isAcceptable()) {
-                        ServerSocketChannel server = (ServerSocketChannel) key
-                                .channel();
-                        SocketChannel channel = server.accept();
-                        channel.configureBlocking(false);
+        while (true) {
+            selector.select();
+            Iterator iterator = selector.selectedKeys().iterator();
+            while (iterator.hasNext()) {
+                SelectionKey key = (SelectionKey) iterator.next();
+                iterator.remove();
+                if (key.isAcceptable()) {
+                    ServerSocketChannel server = (ServerSocketChannel) key
+                            .channel();
+                    SocketChannel channel = server.accept();
+                    channel.configureBlocking(false);
 
-                        if (app == null) {
-                            Application baseApp = (Application) tClzz.newInstance();
-                            app = baseApp.newApp();
-                        }
-                        channel.write(toByteBuffer(app.getCommand("initComm").getPrompt()));
-                        //在和客户端连接成功之后，为了可以接收到客户端的信息，需要给通道设置读的权限。
-                        channel.register(key.selector(), SelectionKey.OP_READ, new Reader());
-                    } else if (key.isReadable() || key.isWritable()) {
-                        Reactor reactor = (Reactor) key.attachment();
-                        reactor.execute(key, app);
+                    if (app == null) {
+                        Application baseApp = (Application) tClzz.newInstance();
+                        app = baseApp.newApp();
                     }
+                    boolean state = Boolean.parseBoolean(app.invoke("initComm:init".split(":")));
+                    if (!state) {
+                        channel.write(toByteBuffer("Oop,Something wrong on server,Sorry!"));
+                        break;
+                    }
+                    channel.write(toByteBuffer(app.getFirstCommand().getPrompt()));
+                    //在和客户端连接成功之后，为了可以接收到客户端的信息，需要给通道设置读的权限。
+                    channel.register(key.selector(), SelectionKey.OP_READ, new Reader());
+                } else if (key.isReadable() || key.isWritable()) {
+                    Reactor reactor = (Reactor) key.attachment();
+                    reactor.execute(key, app);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

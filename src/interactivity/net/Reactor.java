@@ -16,7 +16,7 @@ import java.nio.channels.SelectionKey;
  */
 public class Reactor {
 
-    void execute(SelectionKey key, Application app) throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    void execute(SelectionKey key, Application app) throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, NoSuchFieldException {
 
     }
 

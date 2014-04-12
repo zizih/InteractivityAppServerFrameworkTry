@@ -116,7 +116,7 @@ public class MyHandler extends BaseHandler {
 
 }
 
-class BaseHandler extends AppHandler{
+class BaseHandler extends AppHandler {
 
     protected static List<Event> eventsCache;
     protected static List<String> nicksCache;

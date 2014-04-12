@@ -1,4 +1,4 @@
-package test;
+package test.tmp;
 
 import app.model.Client;
 import interactivity.Person;

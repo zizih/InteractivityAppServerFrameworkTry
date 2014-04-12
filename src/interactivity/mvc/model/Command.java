@@ -38,15 +38,15 @@ public class Command {
             this.opts.put(comm.getId(), comm);
             pattern.append("\n" + comm.getPrompt());
         }
-        this.prompt += "\n\n"
-                + "<<<<Step: " + id + ">>>>"
+        this.prompt += "\n"
+                + "Step: " + id
                 + pattern.toString();
     }
 
     protected Option addOption(Option opt) {
         this.opts.put(opt.getId(), opt);
-        this.prompt += "\n\n"
-                + "<<<<Step: " + id + ">>>>"
+        this.prompt += "\n"
+                + "Step: " + id
                 + opt.getPrompt();
         return opt;
     }
@@ -68,7 +68,7 @@ public class Command {
     }
 
     public String getPrompt() {
-        return prompt;
+        return "---" + prompt;
     }
 
     public String getNextId() {

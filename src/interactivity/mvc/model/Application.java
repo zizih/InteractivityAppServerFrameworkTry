@@ -5,8 +5,8 @@ import interactivity.mvc.AppHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,12 +25,22 @@ public abstract class Application<T extends AppHandler> implements IApplication<
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         tClzz = (Class) params[0];
-        cmds = new HashMap<String, Command>();
+        cmds = new ConcurrentHashMap<String, Command>();
+
+        //init..
+        Command initComm = newCommand();
+        initComm.setId("initComm");
+        initComm.setPrompt("服务器准备完毕");
+        Option init = newOption();
+        init.setId("init");
+        init.setPrompt("处理器状态");
+        initComm.addOption(init);
+        addCommand(initComm);
     }
 
     @Override
     public Application newApp() {
-        return null;  //todo
+        return this;  //todo
     }
 
     public Option newOption() {
@@ -59,12 +69,19 @@ public abstract class Application<T extends AppHandler> implements IApplication<
         comm.addOptions(opts);
     }
 
+    public Command getFirstCommand() {
+        if (cmds.size() == 1) return null;
+        for (Map.Entry<String, Command> entry : cmds.entrySet()) {
+            return entry.getValue();
+        }
+        return null;
+    }
 
     public Command getCommand(String commandId) {
         return cmds.get(commandId);
     }
 
-    public  Command nextCommond(String commandId) {
+    public Command nextCommond(String commandId) {
         Command cm = getCommand(commandId);
         String tmp = cm.getNextId();
         Command cmm = getCommand(tmp);

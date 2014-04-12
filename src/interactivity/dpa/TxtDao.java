@@ -5,7 +5,6 @@ import interactivity.exception.DaoException;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -17,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public class TxtDao<T extends Model> implements IDao<T> {
+public class TxtDao<T extends Model> extends BaseDao<T> implements IDao<T> {
 
     private Class<T> tClzz;
     private Gson gson;
@@ -26,10 +25,6 @@ public class TxtDao<T extends Model> implements IDao<T> {
 
     public TxtDao(Class<T> tClzz) throws IOException {
         this.tClzz = tClzz;
-//        Type genType = getClass().getGenericSuperclass();
-//        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-//        tClzz = (Class) params[0];
-
         String rootPath = System.getProperty("user.dir");
         txt = new File(rootPath + File.separator + tClzz.getName() + ".db");
         if (!txt.exists()) {
@@ -60,7 +55,7 @@ public class TxtDao<T extends Model> implements IDao<T> {
         String line = null;
         //根据id定位到行
         try {
-            if ((line = readAppointedLineNumber(txt, (int) (id + 1))) != null) {
+            if ((line = readAppointedLineNumber(txt, (int) id)) != null) {
                 long key = getKeyByLine(line);
                 if (key == id) {
                     int start = line.indexOf("]");
@@ -87,20 +82,20 @@ public class TxtDao<T extends Model> implements IDao<T> {
     }
 
     @Override
-    public boolean insert(T t) throws IOException {
+    public boolean insert(T t) throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         long id = Long.parseLong(callGetter(t, "id").toString());
         if (id > idCounter.get()) {
             idCounter.getAndSet(id);
         }
-        System.out.println(idCounter.get());
         idCounter.getAndIncrement();
         id = idCounter.get();
+        callSetter(t, "id", id);
         appendMethod(txt.getAbsolutePath(), "[" + id + "]" + gson.toJson(t));
         return true;
     }
 
     @Override
-    public boolean update(T t) throws IOException, DaoException {
+    public boolean update(T t) throws IOException, DaoException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         long id = Long.parseLong(callGetter(t, "id").toString());
         if (readAppointedLineNumber(txt, id) != null) {
             //do not finished
@@ -109,26 +104,16 @@ public class TxtDao<T extends Model> implements IDao<T> {
     }
 
     @Override
-    public boolean delete(long id) {
-        //do not finished
-        return false;
-    }
-
-    private Object callGetter(T t, String fieldName) {
-        String setterName = "get" + fieldName.substring(0, 1).toUpperCase()
-                + fieldName.substring(1, fieldName.length());
-        try {
-            Class clzz = t.getClass();
-            Method method = clzz.getDeclaredMethod(setterName);
-            return method.invoke(t);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+    public boolean delete(long id) throws IOException, DaoException {
+        String line = readAppointedLineNumber(txt, id);
+        if (line != null) {
+            String idStr = line.substring(line.indexOf("[") + 1, line.indexOf("]"));
+            long tmpId = Long.parseLong(idStr);
+            if (tmpId == id) {
+                //can't delete a line
+            }
         }
-        return null;
+        return false;
     }
 
     private long getKeyByLine(String line) {
@@ -153,10 +138,13 @@ public class TxtDao<T extends Model> implements IDao<T> {
         if (lineNumber <= 0 || lineNumber > getTotalLines(sourceFile)) {
             throw new DaoException("不在文件的行数范围(1至总行数)之内。");
         }
-        int lines = 1;
-        while (reader.readLine() != null) {
+        int lines = 0;
+        String line = null;
+        while ((line = reader.readLine()) != null) {
             if (lines + 1 == lineNumber) {
-                return reader.readLine();
+                reader.close();
+                in.close();
+                return line;
             }
             lines++;
         }

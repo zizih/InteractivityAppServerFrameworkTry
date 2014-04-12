@@ -20,7 +20,7 @@ public class Reader extends Reactor {
     @Override
     public void execute(SelectionKey key, Application app) throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
         SocketChannel channel = (SocketChannel) key.channel();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(100);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
         channel.read(byteBuffer);
         byte[] data = byteBuffer.array();
         System.out.println("Received:  " + new String(data).trim());
@@ -33,13 +33,15 @@ public class Reader extends Reactor {
             int len = datas.length;
             if (len < 0) {
                 resultStr = "空命令";
-            } else if (datas[1].equals("exit")) {
-                byteBuffer.clear();
-                key.cancel();
-                channel.close();
-                return;
-            } else {
-                resultStr = app.invoke(datas) + app.nextCommond(datas[0]).getPrompt();
+            } else if (len >= 2) {
+                if (datas[1].equals("exit")) {
+                    byteBuffer.clear();
+                    key.cancel();
+                    channel.close();
+                    return;
+                } else {
+                    resultStr = app.invoke(datas) + "\n" + app.nextCommond(datas[0]).getPrompt();
+                }
             }
         }
         channel.write(toByteBuffer(resultStr));

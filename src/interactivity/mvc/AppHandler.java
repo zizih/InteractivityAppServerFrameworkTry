@@ -9,12 +9,14 @@ import interactivity.dpa.DaoAdapter;
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public class AppHandler {
+public abstract class AppHandler {
 
     protected DaoAdapter dao;
 
-    public AppHandler() {
+    public AppHandler instance;
 
+    public boolean init(){
+        return true;
     }
 
 }
