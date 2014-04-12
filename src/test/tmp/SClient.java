@@ -1,7 +1,6 @@
 package test.tmp;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -12,47 +11,50 @@ import java.net.Socket;
  * EMail: hezi.hz@alibaba-inc.com
  * Comment: ~ ~
  */
-public class SClient {
+public class SClient extends Thread {
 
     private Socket server;
     private OutputStream os;
-    private InputStream is;
-    private int i = 0;
+    private String[] cmds = {
+            "myComm:exit",
+            "myComm:insert:" + System.currentTimeMillis() + ":" + 20,
+            "myComm:list",
+            "myComm:search:" + System.currentTimeMillis()
+    };
+    ;
 
     public SClient(String ip, int port) throws IOException {
         this.server = new Socket(ip, port);
-        this.is = server.getInputStream();
         this.os = server.getOutputStream();
+    }
 
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    os.write("myComm:exit".getBytes());
-                    os.flush();
-                    os.close();
-                    server.close();
-                } catch (IOException e) {
-                    e.printStackTrace();  //deal with ex
-                }
-            }
-        }.start();
-
+    @Override
+    public void run() {
+        try {
+            os.write(cmds[0].getBytes());
+            os.flush();
+//            os.write(cmds[2].getBytes());
+//            os.flush();
+            os.close();
+            server.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //deal with ex
+        }
     }
 
     private static int concurrencyNum = 100000;
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-        System.out.println(start);
+        System.out.println(concurrencyNum + " thead");
         for (int i = 0; i < concurrencyNum; i++) {
             try {
-                new SClient("localhost", 9000);
+                new SClient("localhost", 9000).start();
             } catch (IOException e) {
                 e.printStackTrace();  //deal with ex
             }
         }
-        System.out.println(" period:  " + (System.currentTimeMillis() - start));
+        System.out.println("excuted period:  " + (System.currentTimeMillis() - start));
     }
 
 }

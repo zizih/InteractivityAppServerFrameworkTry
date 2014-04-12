@@ -6,8 +6,7 @@ import interactivity.dpa.DaoAdapter;
 import interactivity.dpa.db.Colum;
 import interactivity.dpa.db.Key;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -25,6 +24,25 @@ public class Test {
 
 
     public static void main(String[] args) {
+        File file = new File(System.getProperty("user.dir") + "/test.Good.db");
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
+            for (int i = 0; i < 100001; i++) {
+                long price = (long) (Math.random() * 100);
+                long namel = (long) (System.currentTimeMillis() + Math.random() * 100);
+                String line = "[" + i + "]" + "{\"id\":" + i + ",\"name\":\"" + namel + "\",\"price\":\"" + price + "\"}\n";
+                out.write(line);
+                out.flush();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();  //deal with ex
+        } catch (IOException e) {
+            e.printStackTrace();  //deal with ex
+        }
+    }
+
+
+    public static void maiyyyn(String[] args) {
         Client c = new Client();
         c.setDesc(Client.Desc.dios);
         c.setId(123);
@@ -36,7 +54,7 @@ public class Test {
             ClientDao dao = new ClientDao();
             dao.insert(c);
             dao.insert(c);
-        System.out.println(dao.fetch().size());
+            System.out.println(dao.fetch().size());
         } catch (Exception e) {
             e.printStackTrace();  //deal with ex
         }
