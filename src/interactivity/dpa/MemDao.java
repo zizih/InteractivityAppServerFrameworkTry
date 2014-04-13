@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class MemDao<T extends Model> extends BaseDao<T> implements IDao<T> {
 
-    private  static Map<Object, T> cache;
+    private Map<Object, T> cache;
     private AtomicLong idCounter;
 
     public MemDao() {
