@@ -13,8 +13,6 @@ public abstract class AppHandler {
 
     protected DaoAdapter dao;
 
-    public AppHandler instance;
-
     public boolean init(){
         return true;
     }

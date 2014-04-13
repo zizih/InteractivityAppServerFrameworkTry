@@ -41,7 +41,11 @@ public class Option {
     }
 
     protected String invoke(String... params) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        return method.invoke(callbackClzz.newInstance(), params).toString();
+        try {
+            return method.invoke(callbackClzz.newInstance(), params).toString();
+        } catch (IllegalArgumentException e) {
+            return "参数不对";
+        }
     }
 
     protected String getId() {

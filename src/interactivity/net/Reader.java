@@ -40,7 +40,7 @@ public class Reader extends Reactor {
                     channel.close();
                     return;
                 } else {
-                    resultStr = app.invoke(datas) + "\n" + app.nextCommond(datas[0]).getPrompt();
+                    resultStr = app.invoke(datas) +"\n"+ app.nextCommond(datas[0]).getPrompt();
                 }
             }
         }

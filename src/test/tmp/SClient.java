@@ -15,9 +15,9 @@ public class SClient extends Thread {
 
     private Socket server;
     private OutputStream os;
-    private String[] cmds = {
+    private static String[] cmds = {
             "myComm:exit",
-            "myComm:insert:" + System.currentTimeMillis() + ":" + 20,
+            "myComm:insert:" + System.currentTimeMillis() + ":" + (Math.random() * 100),
             "myComm:list",
             "myComm:search:" + System.currentTimeMillis()
     };
@@ -31,7 +31,7 @@ public class SClient extends Thread {
     @Override
     public void run() {
         try {
-            os.write(cmds[0].getBytes());
+            os.write(cmds[1].getBytes());
             os.flush();
 //            os.write(cmds[2].getBytes());
 //            os.flush();
@@ -42,7 +42,7 @@ public class SClient extends Thread {
         }
     }
 
-    private static int concurrencyNum = 100000;
+    private static int concurrencyNum = 1;
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
@@ -54,6 +54,16 @@ public class SClient extends Thread {
                 e.printStackTrace();  //deal with ex
             }
         }
+        System.out.println("客户端输入的命令：" + cmds[1]);
+//        try {
+//            Socket socket = new Socket("localhost", 9000);
+//            while (!socket.isConnected()) {
+//                socket.close();
+//                break;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();  //deal with ex
+//        }
         System.out.println("excuted period:  " + (System.currentTimeMillis() - start));
     }
 

@@ -7,7 +7,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class MemDao<T extends Model> extends BaseDao<T> implements IDao<T> {
 
-    private Map<Object, T> cache;
+    private  static Map<Object, T> cache;
     private AtomicLong idCounter;
 
     public MemDao() {

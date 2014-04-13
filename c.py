@@ -24,7 +24,7 @@ def option(str):
 
 
 while True:
-    result = s.recv(1024)
+    result = s.recv(4096)
     lines = result.split('\n')
     for line in lines:
         if line.startswith('['):

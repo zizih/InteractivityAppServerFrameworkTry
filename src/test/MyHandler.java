@@ -18,10 +18,6 @@ public class MyHandler extends AppHandler {
 
     private Gson gson;
 
-    protected static class SingletonContainer {
-        public static MyHandler instance = new MyHandler();
-    }
-
     public MyHandler() {
         try {
             dao = new GoodDao();
@@ -30,8 +26,6 @@ public class MyHandler extends AppHandler {
         }
         gson = new Gson();
     }
-
-    public MyHandler instance = SingletonContainer.instance;
 
     @Override
     public boolean init() {

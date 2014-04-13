@@ -24,49 +24,34 @@ public class DBBaseDao<T extends Model> implements IDBDao<T> {
 
     public DBBaseDao(Class<T> tClzz) {
         this.tClzz = tClzz;
-//        Type genType = getClass().getGenericSuperclass();
-//        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-//        tClzz = (Class) params[0];
-
-
     }
 
     @Override
-    public T fetchOne(Connection conn, long id) {
+    public T fetchOne(Connection conn, long id) throws SQLException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException, InstantiationException, IllegalAccessException {
         MysqlHelper mysqlHelper = MysqlHelper.getInstance();
         Table anno = (Table) tClzz.getAnnotation(Table.class);
         ResultSet rs = mysqlHelper.execQuery(conn, "select * from " + anno.name() + " where id=" + id);
-        try {
-            if (rs.next()) {
-                return toModel(tClzz, rs);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();  //deal with ex
+        if (rs.next()) {
+            return toModel(tClzz, rs);
         }
         return null;
     }
 
     @Override
-    public List<T> fetch(Connection conn) {
+    public List<T> fetch(Connection conn) throws SQLException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException, InstantiationException, IllegalAccessException {
         MysqlHelper mysqlHelper = MysqlHelper.getInstance();
         Table anno = (Table) tClzz.getAnnotation(Table.class);
         ResultSet rs = mysqlHelper.execQuery(conn, "select * from " + anno.name());
-        try {
-            List<T> list = new ArrayList<T>();
-            while (rs.next()) {
-                list.add(toModel(tClzz, rs));
-            }
-            rs.close();
-            return list;
-        } catch (SQLException e) {
-            e.printStackTrace();  //deal with ex
+        List<T> list = new ArrayList<T>();
+        while (rs.next()) {
+            list.add(toModel(tClzz, rs));
         }
-
-        return null;
+        rs.close();
+        return list;
     }
 
     @Override
-    public boolean insert(Connection conn, T t) {
+    public boolean insert(Connection conn, T t) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (!t.getClass().isAnnotationPresent(Table.class)) {
             return false;
         }
@@ -121,7 +106,7 @@ public class DBBaseDao<T extends Model> implements IDBDao<T> {
         return false;
     }
 
-    private Object[] getValues(T t) {
+    private Object[] getValues(T t) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (!t.getClass().isAnnotationPresent(Table.class)) {
             return null;
         }
@@ -135,46 +120,27 @@ public class DBBaseDao<T extends Model> implements IDBDao<T> {
         return values;
     }
 
-    private T toModel(Class clzz, ResultSet rs) {
-        try {
-            T t = (T) clzz.newInstance();
-            String[] colums = getColums(clzz);
-            for (String colum : colums) {
-                callSetter(t, colum, rs.getObject(rs.findColumn(colum)));
-            }
-            rs.close();
-            return t;
-        } catch (InstantiationException e) {
-            e.printStackTrace();  //deal with ex
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();  //deal with ex
-        } catch (SQLException e) {
-            e.printStackTrace();  //deal with ex
+    private T toModel(Class clzz, ResultSet rs) throws IllegalAccessException, InstantiationException, SQLException, NoSuchMethodException, NoSuchFieldException, InvocationTargetException {
+        T t = (T) clzz.newInstance();
+        String[] colums = getColums(clzz);
+        for (String colum : colums) {
+            callSetter(t, colum, rs.getObject(rs.findColumn(colum)));
         }
-        return null;
+        rs.close();
+        return t;
     }
 
-    private Object callGetter(T t, String fieldName) {
+    private Object callGetter(T t, String fieldName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String setterName = "get" + fieldName.substring(0, 1).toUpperCase()
                 + fieldName.substring(1, fieldName.length());
-        try {
-            Class clzz = t.getClass();
-            Method method = clzz.getDeclaredMethod(setterName);
-            return method.invoke(t);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Class clzz = t.getClass();
+        Method method = clzz.getDeclaredMethod(setterName);
+        return method.invoke(t);
     }
 
-    private void callSetter(T t, String fieldName, Object value) {
+    private void callSetter(T t, String fieldName, Object value) throws NoSuchFieldException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String setterName = "set" + fieldName.substring(0, 1).toUpperCase()
                 + fieldName.substring(1, fieldName.length());
-        try {
             Class clzz = t.getClass();
             Field field = clzz.getDeclaredField(fieldName);
             Class type = field.getType();
@@ -188,16 +154,6 @@ public class DBBaseDao<T extends Model> implements IDBDao<T> {
                 return;
             }
             method.invoke(t, value);
-
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
     }
 
     private String[] getColums(Class clzz) {

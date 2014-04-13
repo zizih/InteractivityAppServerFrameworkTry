@@ -81,7 +81,7 @@ public class NIOServer<T extends Application> implements IServer<T> {
                     channel.write(toByteBuffer(app.getFirstCommand().getPrompt()));
                     //在和客户端连接成功之后，为了可以接收到客户端的信息，需要给通道设置读的权限。
                     channel.register(key.selector(), SelectionKey.OP_READ, new Reader());
-                } else if (key.isReadable() || key.isWritable()) {
+                } else if (key.isReadable()) {
                     Reactor reactor = (Reactor) key.attachment();
                     reactor.execute(key, app);
                 }

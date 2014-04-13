@@ -39,9 +39,8 @@ public abstract class Application<T extends AppHandler> implements IApplication<
     }
 
     @Override
-    public Application newApp() {
-        return this;  //todo
-    }
+    public abstract Application newApp() ;
+
 
     public Option newOption() {
         return new Option(tClzz);

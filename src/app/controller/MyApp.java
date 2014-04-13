@@ -20,8 +20,8 @@ public class MyApp extends Application<MyHandler> {
         Option demo, todo, exit, regist, show, wish; //有这些开关
 
         //第一个option
-        initComm = app.newCommand("initComm", "oneComm", "Successfully!");
-        initComm.setId("initComm");
+        initComm = app.newCommand("zeroComm", "oneComm", "Successfully!");
+        initComm.setId("zeroComm");
         initComm.setNextId("oneComm");
         initComm.setPrompt("Successfully!");
         demo = app.newOption();
@@ -62,7 +62,7 @@ public class MyApp extends Application<MyHandler> {
         //第三个option  //有复用，按需设计
         thrComm = app.newCommand();
         thrComm.setId("thrComm");
-        thrComm.setNextId("oneComm");   //循环复用
+        thrComm.setNextId("zeroComm");   //循环复用
         thrComm.setPrompt("说了就不会遗憾");
         app.addCommand(thrComm, show, todo, regist, wish, exit);
         return app;

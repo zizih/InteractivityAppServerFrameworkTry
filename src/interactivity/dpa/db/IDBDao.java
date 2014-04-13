@@ -1,6 +1,8 @@
 package interactivity.dpa.db;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -12,11 +14,11 @@ import java.util.List;
  */
 public interface IDBDao<T> {
 
-    T fetchOne(Connection conn, long id);
+    T fetchOne(Connection conn, long id) throws SQLException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 
-    List<T> fetch(Connection conn);
+    List<T> fetch(Connection conn) throws SQLException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 
-    boolean insert(Connection conn, T t);
+    boolean insert(Connection conn, T t) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
     boolean update(Connection conn, T t);
 

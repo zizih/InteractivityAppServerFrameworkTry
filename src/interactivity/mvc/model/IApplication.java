@@ -11,6 +11,6 @@ import interactivity.mvc.AppHandler;
  */
 public interface IApplication<T extends AppHandler> {
 
-    public IApplication newApp();
+    public abstract IApplication newApp();
 
 }
